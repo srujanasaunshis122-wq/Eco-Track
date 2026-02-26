@@ -1,25 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkyFetch - Weather Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyFetch Weather Dashboard</title>
+  
+  <!-- Link CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Axios CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>🌤️ SkyFetch</h1>
-        <p class="tagline">Your Personal Weather Dashboard</p>
-        
-        <div id="weather-display">
-            <p class="loading">Loading weather data...</p>
-        </div>
+
+  <div class="container">
+    <h1>🌦 SkyFetch Weather Dashboard</h1>
+
+    <!-- 🔍 Search Section -->
+    <div class="search">
+      <input 
+        type="text" 
+        id="cityInput" 
+        placeholder="Enter city name..."
+      >
+      <button id="searchBtn">Search</button>
     </div>
 
-    <!-- Axios CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    
-    <!-- Your JavaScript -->
-    <script src="app.js"></script>
+    <!-- 🌤 Weather Display Section -->
+    <div id="weather">
+      <!-- Weather data will appear here dynamically -->
+    </div>
+  </div>
+
+  <!-- Link JS -->
+  <script src="app.js"></script>
+
 </body>
 </html>
