@@ -1,49 +1,77 @@
-// Your OpenWeatherMap API Key
-const API_KEY = 'c4aa48afc44d7abcc55bb08eec8b46eb';  // Replace with your actual API key
-const API_URL = 'https://api.openweathermap.org/data/2.5/weather';
+const cityInput = document.getElementById("cityInput");
+const searchBtn = document.getElementById("searchBtn");
+const weatherDiv = document.getElementById("weather");
 
-// Function to fetch weather data
-function getWeather(city) {
-    // Build the complete URL
-    const url = `${API_URL}?q=${city}&appid=${API_KEY}&units=metric`;
-    
-    // Make API call using Axios
-    axios.get(url)
-        .then(function(response) {
-            // Success! We got the data
-            console.log('Weather Data:', response.data);
-            displayWeather(response.data);
-        })
-        .catch(function(error) {
-            // Something went wrong
-            console.error('Error fetching weather:', error);
-            document.getElementById('weather-display').innerHTML = 
-                '<p class="loading">Could not fetch weather data. Please try again.</p>';
-        });
-}
+// 🔹 Fetch Weather Function (Async/Await)
+async function getWeather(city) {
+  const apiKey = "20c8844b8602170d479d75794e374d55"; // 🔴 Replace with your actual API key
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
-// Function to display weather data
-function displayWeather(data) {
-    // Extract the data we need
-    const cityName = data.name;
-    const temperature = Math.round(data.main.temp);
-    const description = data.weather[0].description;
-    const icon = data.weather[0].icon;
-    const iconUrl = `https://openweathermap.org/img/wn/${icon}@2x.png`;
-    
-    // Create HTML to display
-    const weatherHTML = `
-        <div class="weather-info">
-            <h2 class="city-name">${cityName}</h2>
-            <img src="${iconUrl}" alt="${description}" class="weather-icon">
-            <div class="temperature">${temperature}°C</div>
-            <p class="description">${description}</p>
-        </div>
+  try {
+    showLoading();
+    searchBtn.disabled = true;
+
+    const response = await axios.get(url);
+    const data = response.data;
+
+    weatherDiv.innerHTML = `
+      <h2>${data.name}, ${data.sys.country}</h2>
+      <p><strong>🌡 Temperature:</strong> ${data.main.temp}°C</p>
+      <p><strong>🤔 Feels Like:</strong> ${data.main.feels_like}°C</p>
+      <p><strong>🌤 Weather:</strong> ${data.weather[0].description}</p>
+      <p><strong>💧 Humidity:</strong> ${data.main.humidity}%</p>
+      <p><strong>🌬 Wind Speed:</strong> ${data.wind.speed} m/s</p>
     `;
-    
-    // Put it on the page
-    document.getElementById('weather-display').innerHTML = weatherHTML;
+
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      showError("City not found. Please enter a valid city name.");
+    } else {
+      showError("Something went wrong. Please try again later.");
+    }
+  } finally {
+    searchBtn.disabled = false;
+  }
 }
 
-// Call the function when page loads
-getWeather('London');
+// 🔹 Show Loading Spinner
+function showLoading() {
+  weatherDiv.innerHTML = `
+    <div class="spinner"></div>
+    <p>Loading weather data...</p>
+  `;
+}
+
+// 🔹 Show Error Message
+function showError(message) {
+  weatherDiv.innerHTML = `
+    <p class="error">${message}</p>
+  `;
+}
+
+// 🔹 Search Button Click Event
+searchBtn.addEventListener("click", () => {
+  const city = cityInput.value.trim();
+
+  if (city === "") {
+    showError("Please enter a city name.");
+    cityInput.focus();
+    return;
+  }
+
+  getWeather(city);
+  cityInput.value = "";
+});
+
+// 🔹 Enter Key Support
+cityInput.addEventListener("keypress", (event) => {
+  if (event.key === "Enter") {
+    searchBtn.click();
+  }
+});
+
+// 🔹 Initial Welcome Message
+weatherDiv.innerHTML = `
+  <h3>🌍 Welcome to SkyFetch</h3>
+  <p>Enter a city name above to check the weather.</p>
+`;
